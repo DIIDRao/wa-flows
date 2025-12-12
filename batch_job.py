@@ -1,27 +1,24 @@
-from prefect import flow, task
-
-
-@task
-def extract():
-    return "Data Extracted"
-
+from prefect import flow, task, get_run_logger
 
 @task
-def transform(data):
-    return f"{data} → Transformed"
-
+def extract_data():
+    logger = get_run_logger()
+    logger.info("Extracting data...")
+    return ["item1", "item2"]
 
 @task
-def load(data):
-    print(f"Loading: {data}")
+def process_data(items):
+    logger = get_run_logger()
+    logger.info(f"Processing data: {items}")
+    return items
 
-
-@flow
-def etl_flow():
-    raw = extract()
-    processed = transform(raw)
-    load(processed)
-
+@flow(log_prints=True)   # <---- VERY IMPORTANT
+def batch_job():
+    print("Starting batch job...")  # this will show in cloud because log_prints=True
+    data = extract_data()
+    processed = process_data(data)
+    print("Batch job completed!")
+    return processed
 
 if __name__ == "__main__":
-    etl_flow()
+    batch_job()
