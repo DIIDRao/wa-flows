@@ -1,0 +1,13 @@
+version: 1
+
+deployments:
+  - name: batch-test-deployment
+    entrypoint: batch_job.py:etl_flow
+    work_pool:
+      name: default-work-pool
+    infra_overrides:
+      env:
+        PREFECT__LOGGING__EXTRA_LOGGERS: ["prefect"]
+      # Run locally using subprocess instead of managed execution
+      prefect_infra: "subprocess"
+    tags: []
